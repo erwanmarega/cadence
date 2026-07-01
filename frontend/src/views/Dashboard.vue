@@ -67,6 +67,14 @@ function fmtInterval(i) {
 function fmtDate(d) {
   return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "—";
 }
+function planTitle(s) {
+  if (s.allocations?.length) return "Panier";
+  return s.symbol?.split("/")[0] || s.symbol || "—";
+}
+function planDetail(s) {
+  if (s.allocations?.length) return s.allocations.map((a) => `${a.base} ${a.weight}%`).join(" · ");
+  return null;
+}
 </script>
 
 <template>
@@ -178,7 +186,7 @@ function fmtDate(d) {
           <div class="flex items-start justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <span class="h-display text-xl font-semibold">{{ s.symbol }}</span>
+                <span class="h-display text-xl font-semibold">{{ planTitle(s) }}</span>
                 <span class="badge" :class="{
                   'badge-active': s.status === 'active',
                   'badge-paused': s.status === 'paused',
@@ -195,6 +203,7 @@ function fmtDate(d) {
               <p class="mt-1 text-2xl font-semibold tracking-tight">
                 {{ s.amount }} <span class="text-base font-normal text-muted">{{ s.quote_currency }}</span>
               </p>
+              <p v-if="planDetail(s)" class="text-xs text-muted">{{ planDetail(s) }}</p>
               <p class="text-sm text-muted">{{ fmtInterval(s.interval) }}</p>
             </div>
           </div>
@@ -226,7 +235,7 @@ function fmtDate(d) {
       :open="!!toDelete"
       danger
       title="Supprimer ce plan ?"
-      :message="toDelete ? `Le plan ${toDelete.symbol} (${toDelete.amount} ${toDelete.quote_currency}) sera supprimé définitivement. Ton historique d'achats reste consultable. Tes fonds ne sont pas touchés.` : ''"
+      :message="toDelete ? `Le plan ${planTitle(toDelete)} (${toDelete.amount} ${toDelete.quote_currency}) sera supprimé définitivement. Ton historique d'achats reste consultable. Tes fonds ne sont pas touchés.` : ''"
       confirm-label="Supprimer"
       :busy="deleting"
       @update:open="(v) => { if (!v) toDelete = null; }"
