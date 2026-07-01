@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* Design language: warm "paper" fintech, not a trading terminal.
+   Editorial serif headings + clean sans body. Deep savings-green accent. */
+@theme {
+  --color-paper: #faf7f0;
+  --color-paper-2: #f3eee2;
+  --color-surface: #ffffff;
+  --color-ink: #1b1a16;
+  --color-ink-soft: #45423a;
+  --color-muted: #767064;
+  --color-line: #e7e0d0;
+  --color-line-strong: #d8cfb9;
+
+  --color-brand: #126b50;
+  --color-brand-hover: #0e5640;
+  --color-brand-soft: #e2efe8;
+  --color-brand-ink: #0a4634;
+
+  --color-amber: #946200;
+  --color-amber-soft: #f6ead0;
+  --color-danger: #ab392c;
+  --color-danger-soft: #f6e1dc;
+
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xl2: 1.1rem;
+}
+
+html {
+  background: var(--color-paper);
+}
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-medium transition-all duration-150 cursor-pointer
+           disabled:opacity-45 disabled:cursor-not-allowed select-none;
+  }
+  .btn-primary {
+    @apply bg-brand text-white shadow-sm hover:bg-brand-hover
+           hover:shadow active:translate-y-px;
+  }
+  .btn-secondary {
+    @apply bg-surface text-ink border border-line-strong
+           hover:border-ink/30 hover:bg-paper-2;
+  }
+  .btn-ghost {
+    @apply text-muted hover:text-ink hover:bg-paper-2;
+  }
+  .btn-danger {
+    @apply bg-danger text-white shadow-sm hover:brightness-110 active:translate-y-px;
+  }
+
+  .card {
+    @apply bg-surface border border-line rounded-[var(--radius-xl2)] p-6
+           shadow-[0_1px_2px_rgba(27,26,22,0.04),0_8px_24px_-12px_rgba(27,26,22,0.10)];
+  }
+
+  .field-label {
+    @apply block text-xs font-medium uppercase tracking-wide text-muted mb-1.5;
+  }
+  .field {
+    @apply w-full rounded-xl border border-line-strong bg-paper/40 px-3.5 py-2.5
+           text-ink placeholder:text-muted/60 outline-none transition
+           focus:border-brand focus:bg-surface focus:ring-2 focus:ring-brand/15;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5
+           text-xs font-medium;
+  }
+  .badge-active { @apply bg-brand-soft text-brand-ink; }
+  .badge-paused { @apply bg-amber-soft text-amber; }
+  .badge-success { @apply bg-brand-soft text-brand-ink; }
+  .badge-failed { @apply bg-danger-soft text-danger; }
+
+  .h-display { @apply font-display tracking-tight; }
+}
