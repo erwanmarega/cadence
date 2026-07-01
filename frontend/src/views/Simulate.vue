@@ -34,7 +34,7 @@ const comparison = [
   { label: "Objectifs d'épargne", exchange: "Non", cadence: "Cap + progression motivante" },
   { label: "Accompagnement débutant", exchange: "Interface de trader", cadence: "Mode guidé, vocabulaire simple" },
   { label: "Simulation avant de se lancer", exchange: "Non", cadence: "Oui, sans compte" },
-  { label: "Export fiscal (plus-values)", exchange: "Non", cadence: "Relevé annuel", soon: true },
+  { label: "Export fiscal (plus-values)", exchange: "Non", cadence: "Relevé annuel + prix de revient" },
 ];
 
 const form = ref({ base: "BTC", amount: 20, interval: "weekly", years: 3 });

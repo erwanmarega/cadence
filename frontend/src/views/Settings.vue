@@ -84,6 +84,15 @@ const modes = [
       <span class="text-muted">→</span>
     </button>
 
+    <button class="card mt-4 flex w-full items-center justify-between text-left transition hover:border-ink/30"
+            @click="router.push({ name: 'tax' })">
+      <div>
+        <h3 class="h-display text-lg font-semibold">Relevé fiscal</h3>
+        <p class="mt-1 text-sm text-muted">Export de tes achats et prix de revient, par année</p>
+      </div>
+      <span class="text-muted">→</span>
+    </button>
+
     <div class="card mt-4 text-sm text-muted">
       Connecté en tant que <span class="text-ink">{{ auth.user?.email }}</span>
     </div>

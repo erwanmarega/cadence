@@ -52,4 +52,21 @@ export const api = {
   listGoals: () => request("GET", "/goals"),
   createGoal: (payload) => request("POST", "/goals", payload),
   deleteGoal: (id) => request("DELETE", `/goals/${id}`),
+
+  taxSummary: (year) => request("GET", `/tax/summary${year ? `?year=${year}` : ""}`),
+  taxExport: async (year) => {
+    const res = await fetch(`${BASE}/api/tax/export?year=${year}`, {
+      headers: { ...(await authHeader()) },
+    });
+    if (!res.ok) throw new Error("Export impossible");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `cadence_releve_fiscal_${year}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  },
 };
