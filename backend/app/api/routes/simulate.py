@@ -15,9 +15,11 @@ import bisect
 import ccxt
 from fastapi import APIRouter, HTTPException, Query
 
+from app.core.assets import CURATED_BASES
+
 router = APIRouter(prefix="/simulate", tags=["simulate"])
 
-ALLOWED_BASES = ["BTC", "ETH", "SOL", "ADA", "DOT", "XRP", "LTC"]
+ALLOWED_BASES = CURATED_BASES
 _INTERVAL_DAYS = {"daily": 1, "weekly": 7, "biweekly": 14, "monthly": 30}
 
 _client: ccxt.Exchange | None = None

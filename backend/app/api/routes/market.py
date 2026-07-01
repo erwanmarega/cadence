@@ -10,7 +10,9 @@ recommendation; only observed prices and 24h variation.
 from datetime import datetime, timezone
 
 import ccxt
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
+
+from app.core.assets import CURATED_BASES
 
 router = APIRouter(prefix="/market", tags=["market"])
 
@@ -28,6 +30,41 @@ def _kraken() -> ccxt.Exchange:
     if _client is None:
         _client = ccxt.kraken({"enableRateLimit": True})
     return _client
+
+
+_bases_cache: dict[str, list[str]] = {}
+
+
+@router.get("/bases")
+def bases(
+    exchange: str = Query(default="kraken"),
+    quote: str = Query(default="EUR"),
+):
+    """Liste des cryptos avec une paire /quote tradable sur l'exchange.
+
+    Données marché publiques (pas de clé). Résultat mis en cache : load_markets
+    est lent. Utilisé par le mode confirmé pour dépasser la liste curée.
+    """
+    key = f"{exchange}:{quote}"
+    if key in _bases_cache:
+        return {"exchange": exchange, "quote": quote, "bases": _bases_cache[key]}
+
+    if not hasattr(ccxt, exchange):
+        raise HTTPException(status_code=400, detail="Exchange non supporté")
+
+    try:
+        client = getattr(ccxt, exchange)({"enableRateLimit": True})
+        markets = client.load_markets()
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Données marché indisponibles: {exc}")
+
+    found = sorted({
+        m["base"]
+        for m in markets.values()
+        if m.get("quote") == quote and m.get("spot", True) and m.get("active", True)
+    })
+    _bases_cache[key] = found
+    return {"exchange": exchange, "quote": quote, "bases": found}
 
 
 @router.get("/trends")

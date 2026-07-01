@@ -40,6 +40,7 @@ export const api = {
   },
 
   trends: () => request("GET", "/market/trends"),
+  marketBases: (exchange = "kraken") => request("GET", `/market/bases?exchange=${exchange}`),
 
   portfolioSummary: () => request("GET", "/portfolio/summary"),
   portfolioHistory: () => request("GET", "/portfolio/history"),

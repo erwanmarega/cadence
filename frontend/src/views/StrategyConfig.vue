@@ -4,6 +4,8 @@ import { useRouter } from "vue-router";
 import { api } from "../lib/api";
 import { useStrategiesStore } from "../stores/strategies";
 import { useAuthStore } from "../stores/auth";
+import { CURATED_BASES } from "../lib/assets";
+import CryptoSelect from "../components/CryptoSelect.vue";
 import Tooltip from "../components/Tooltip.vue";
 
 const router = useRouter();
@@ -21,7 +23,27 @@ const form = ref({
 const error = ref("");
 const busy = ref(false);
 
-const COINS = ["BTC", "ETH", "SOL", "ADA", "DOT"];
+const allBases = ref([]);
+const showAll = ref(false);
+const loadingBases = ref(false);
+const coins = computed(() => (showAll.value && allBases.value.length ? allBases.value : CURATED_BASES));
+
+const selectedExchange = computed(
+  () => connections.value.find((c) => c.id === form.value.exchange_connection_id)?.exchange || "kraken",
+);
+
+async function loadAllBases() {
+  showAll.value = true;
+  loadingBases.value = true;
+  try {
+    allBases.value = (await api.marketBases(selectedExchange.value)).bases;
+  } catch {
+    showAll.value = false;
+  } finally {
+    loadingBases.value = false;
+  }
+}
+
 const INTERVALS = [
   { value: "daily", label: "Chaque jour" },
   { value: "weekly", label: "Chaque semaine" },
@@ -93,9 +115,16 @@ async function submit() {
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label class="field-label">Crypto <Tooltip text="La cryptomonnaie que le bot achètera à chaque échéance." /></label>
-          <select v-model="form.base" class="field">
-            <option v-for="c in COINS" :key="c" :value="c">{{ c }}</option>
-          </select>
+          <CryptoSelect v-model="form.base" :options="coins" />
+          <button v-if="!auth.isBeginner && !showAll" type="button"
+                  class="mt-1.5 text-xs text-brand hover:underline"
+                  :disabled="loadingBases" @click="loadAllBases">
+            {{ loadingBases ? "Chargement…" : "Voir toutes les cryptos" }}
+          </button>
+          <button v-else-if="!auth.isBeginner && showAll" type="button"
+                  class="mt-1.5 text-xs text-muted hover:underline" @click="showAll = false">
+            Revenir à la sélection principale
+          </button>
         </div>
         <div>
           <label class="field-label">Devise</label>

@@ -1,7 +1,9 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { api } from "../lib/api";
 import { useAuthStore } from "../stores/auth";
+import { CURATED_BASES } from "../lib/assets";
+import CryptoSelect from "../components/CryptoSelect.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 
 const auth = useAuthStore();
@@ -16,7 +18,23 @@ const saving = ref(false);
 const toDelete = ref(null);
 const deleting = ref(false);
 
-const COINS = ["BTC", "ETH", "SOL", "ADA", "DOT", "XRP"];
+const allBases = ref([]);
+const showAll = ref(false);
+const loadingBases = ref(false);
+const coins = computed(() => (showAll.value && allBases.value.length ? allBases.value : CURATED_BASES));
+
+async function loadAllBases() {
+  showAll.value = true;
+  if (allBases.value.length) return;
+  loadingBases.value = true;
+  try {
+    allBases.value = (await api.marketBases()).bases;
+  } catch {
+    showAll.value = false;
+  } finally {
+    loadingBases.value = false;
+  }
+}
 
 async function load() {
   loading.value = true;
@@ -91,9 +109,16 @@ function fmtMoney(n, cur = "EUR") {
       <div class="grid grid-cols-3 gap-4">
         <div>
           <label class="field-label">Crypto</label>
-          <select v-model="form.base" class="field">
-            <option v-for="c in COINS" :key="c" :value="c">{{ c }}</option>
-          </select>
+          <CryptoSelect v-model="form.base" :options="coins" />
+          <button v-if="!auth.isBeginner && !showAll" type="button"
+                  class="mt-1.5 text-xs text-brand hover:underline"
+                  :disabled="loadingBases" @click="loadAllBases">
+            {{ loadingBases ? "Chargement…" : "Voir toutes les cryptos" }}
+          </button>
+          <button v-else-if="!auth.isBeginner && showAll" type="button"
+                  class="mt-1.5 text-xs text-muted hover:underline" @click="showAll = false">
+            Revenir à la sélection principale
+          </button>
         </div>
         <div class="col-span-2">
           <label class="field-label">Objectif (montant)</label>
