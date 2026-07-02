@@ -156,7 +156,7 @@ function fmtMoney(n, cur = "EUR") {
               · {{ g.base }}
             </p>
           </div>
-          <button class="btn-ghost !px-2 !py-1 text-xs text-danger hover:bg-danger-soft" @click="toDelete = g">Supprimer</button>
+          <button class="btn-ghost px-2 py-1 text-xs text-danger hover:bg-danger-soft" @click="toDelete = g">Supprimer</button>
         </div>
         <div class="mt-4">
           <div class="h-3 w-full overflow-hidden rounded-full bg-paper-2">

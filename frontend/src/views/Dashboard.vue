@@ -104,7 +104,7 @@ function planDetail(s) {
       <span class="whitespace-nowrap font-medium text-brand">Apprendre →</span>
     </RouterLink>
 
-    <div v-if="hasPositions" class="card mt-6 bg-gradient-to-br from-surface to-brand-soft/30">
+    <div v-if="hasPositions" class="card mt-6 bg-linear-to-br from-surface to-brand-soft/30">
       <div class="grid gap-6 sm:grid-cols-3">
         <div>
           <p class="field-label">Valeur actuelle
@@ -146,7 +146,7 @@ function planDetail(s) {
 
     <div v-if="hasPositions" class="mt-6">
       <h2 class="h-display text-xl font-semibold">Tes positions</h2>
-      <div class="card mt-3 !p-0 overflow-hidden">
+      <div class="card mt-3 p-0 overflow-hidden">
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
@@ -234,10 +234,10 @@ function planDetail(s) {
               <Tooltip text="Date du prochain achat automatique. Le bot achète au prix du marché à ce moment-là." />
             </p>
             <div class="flex gap-2">
-              <button class="btn-secondary !px-3 !py-1.5 text-xs" @click="store.toggle(s)">
+              <button class="btn-secondary px-3 py-1.5 text-xs" @click="store.toggle(s)">
                 {{ s.status === "active" ? "Suspendre" : "Réactiver" }}
               </button>
-              <button class="btn-ghost !px-2 !py-1.5 text-xs text-danger hover:bg-danger-soft"
+              <button class="btn-ghost px-2 py-1.5 text-xs text-danger hover:bg-danger-soft"
                       title="Supprimer le plan" @click="toDelete = s">Supprimer</button>
             </div>
           </div>
