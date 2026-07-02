@@ -30,8 +30,7 @@ async function confirmDelete() {
   }
 }
 
-onMounted(async () => {
-  store.load();
+async function loadPortfolio() {
   perfLoading.value = true;
   try {
     perf.value = await api.portfolioSummary();
@@ -45,6 +44,13 @@ onMounted(async () => {
   } catch {
     history.value = null;
   }
+}
+
+onMounted(async () => {
+  store.load();
+  await loadPortfolio();  
+  const imported = await api.autoSyncTrades();
+  if (imported > 0) await loadPortfolio();
 });
 
 const hasStrategies = computed(() => store.items.length > 0);

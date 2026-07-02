@@ -46,7 +46,12 @@ async function load() {
     loading.value = false;
   }
 }
-onMounted(load);
+
+onMounted(async () => {
+  await load();
+  const imported = await api.autoSyncTrades();
+  if (imported > 0) await load();
+});
 
 async function create() {
   error.value = "";

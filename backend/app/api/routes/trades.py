@@ -86,16 +86,15 @@ def sync_trades(user_id: str = Depends(get_current_user_id)):
     imported = 0
     if rows:
         existing = (
-            sb.table("trades")
-            .select("ext_id")
-            .eq("user_id", user_id)
-            .not_.is_("ext_id", "null")
-            .execute()
+            sb.table("trades").select("ext_id").eq("user_id", user_id).execute()
         ).data or []
-        seen = {e["ext_id"] for e in existing}
+        seen = {e["ext_id"] for e in existing if e.get("ext_id")}
         new_rows = [r for r in rows if r["ext_id"] not in seen]
         if new_rows:
-            sb.table("trades").insert(new_rows).execute()
-        imported = len(new_rows)
+            try:
+                sb.table("trades").insert(new_rows).execute()
+                imported = len(new_rows)
+            except Exception:
+                imported = 0
 
     return {"imported": imported, "fetched": len(rows), "errors": errors}

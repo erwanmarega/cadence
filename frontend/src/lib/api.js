@@ -39,6 +39,18 @@ export const api = {
     return request("GET", `/trades${qs ? `?${qs}` : ""}`);
   },
   syncTrades: () => request("POST", "/trades/sync"),
+  autoSyncTrades: async () => {
+    const KEY = "cadence_last_sync";
+    const last = Number(localStorage.getItem(KEY) || 0);
+    if (Date.now() - last < 60000) return 0;
+    localStorage.setItem(KEY, String(Date.now()));
+    try {
+      const r = await request("POST", "/trades/sync");
+      return r.imported || 0;
+    } catch {
+      return 0;
+    }
+  },
 
   trends: () => request("GET", "/market/trends"),
   marketBases: (exchange = "kraken") => request("GET", `/market/bases?exchange=${exchange}`),
