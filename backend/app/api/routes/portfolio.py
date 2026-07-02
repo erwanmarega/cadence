@@ -36,7 +36,7 @@ def _success_trades(user_id: str) -> list[dict]:
     sb = get_supabase()
     return (
         sb.table("trades")
-        .select("symbol, amount, filled, quote_currency, status, executed_at")
+        .select("symbol, amount, filled, quote_currency, status, side, executed_at")
         .eq("user_id", user_id)
         .eq("status", "success")
         .order("executed_at")
@@ -50,7 +50,7 @@ def compute_positions(user_id: str) -> dict:
 
     agg: dict[str, dict] = {}
     for t in trades:
-        if not t.get("filled"):
+        if not t.get("filled") or t.get("side") == "sell":
             continue
         a = agg.setdefault(t["symbol"], {
             "symbol": t["symbol"],
@@ -163,7 +163,7 @@ def history(user_id: str = Depends(get_current_user_id)):
         invested = 0.0
         qty: dict[str, float] = {}
         for t in trades:
-            if not t.get("filled"):
+            if not t.get("filled") or t.get("side") == "sell":
                 continue
             tdate = datetime.fromisoformat(t["executed_at"]).date()
             if tdate <= day:

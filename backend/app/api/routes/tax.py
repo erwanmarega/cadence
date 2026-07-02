@@ -52,7 +52,7 @@ def _success_trades(user_id: str, year: int | None = None) -> list[dict]:
     sb = get_supabase()
     query = (
         sb.table("trades")
-        .select("symbol, amount, filled, price, quote_currency, executed_at, strategy_id")
+        .select("symbol, amount, filled, price, quote_currency, executed_at, strategy_id, side, source, exchange")
         .eq("user_id", user_id)
         .eq("status", "success")
     )
@@ -69,7 +69,7 @@ def _available_years(user_id: str) -> list[int]:
 
 
 def _build(user_id: str, year: int) -> dict:
-    trades = [t for t in _success_trades(user_id, year) if t.get("filled")]
+    trades = [t for t in _success_trades(user_id, year) if t.get("filled") and t.get("side") != "sell"]
     exmap = _exchange_map(user_id)
 
     rows = []
@@ -86,7 +86,7 @@ def _build(user_id: str, year: int) -> dict:
         rows.append(
             {
                 "date": t["executed_at"][:10],
-                "exchange": exmap.get(t["strategy_id"], "—"),
+                "exchange": t.get("exchange") or exmap.get(t.get("strategy_id"), "—"),
                 "base": base,
                 "symbol": t["symbol"],
                 "invested": round(invested, 2),

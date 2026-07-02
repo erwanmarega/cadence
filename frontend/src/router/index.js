@@ -14,6 +14,7 @@ const routes = [
   { path: "/settings", name: "settings", component: () => import("../views/Settings.vue") },
   { path: "/security", name: "security", component: () => import("../views/Security.vue") },
   { path: "/tax", name: "tax", component: () => import("../views/TaxExport.vue") },
+  { path: "/learn", name: "learn", component: () => import("../views/Learn.vue") },
 ];
 
 const router = createRouter({

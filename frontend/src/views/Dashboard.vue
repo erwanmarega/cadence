@@ -90,6 +90,14 @@ function planDetail(s) {
       <button class="btn-primary" @click="router.push({ name: 'strategy-new' })">+ Nouveau plan</button>
     </div>
 
+    <RouterLink v-if="auth.isBeginner" to="/learn"
+      class="mt-6 flex items-center justify-between gap-4 rounded-xl border border-line bg-brand-soft/30 px-4 py-3 text-sm transition hover:border-brand/40">
+      <span class="text-ink-soft">
+        <strong class="text-brand-ink">Nouveau ici ?</strong> Comprends le DCA, les risques et comment Cadence protège tes fonds.
+      </span>
+      <span class="whitespace-nowrap font-medium text-brand">Apprendre →</span>
+    </RouterLink>
+
     <div v-if="hasPositions" class="card mt-6 bg-gradient-to-br from-surface to-brand-soft/30">
       <div class="grid gap-6 sm:grid-cols-3">
         <div>

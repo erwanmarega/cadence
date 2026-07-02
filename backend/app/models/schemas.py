@@ -121,7 +121,7 @@ class StrategyOut(BaseModel):
 
 class TradeOut(BaseModel):
     id: str
-    strategy_id: str
+    strategy_id: Optional[str] = None
     symbol: str
     amount: float
     quote_currency: str
@@ -129,4 +129,7 @@ class TradeOut(BaseModel):
     filled: Optional[float] = None
     status: TradeStatus
     error: Optional[str] = None
+    source: str = "cadence"
+    side: Optional[str] = None
+    exchange: Optional[str] = None
     executed_at: datetime

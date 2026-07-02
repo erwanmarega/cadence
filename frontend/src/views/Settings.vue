@@ -8,6 +8,7 @@ import { api } from "../lib/api";
 const auth = useAuthStore();
 const router = useRouter();
 const busy = ref(false);
+const switching = ref(false);
 const connCount = ref(null);
 
 onMounted(async () => {
@@ -23,7 +24,9 @@ async function choose(mode) {
   busy.value = true;
   try {
     await auth.setMode(mode);
-  } finally {
+    switching.value = true;
+    setTimeout(() => window.location.reload(), 700);
+  } catch {
     busy.value = false;
   }
 }
@@ -35,6 +38,19 @@ const modes = [
 </script>
 
 <template>
+  <Teleport to="body">
+    <Transition name="fade">
+      <div v-if="switching" class="fixed inset-0 z-50 grid place-items-center bg-paper/90 backdrop-blur-sm">
+        <div class="flex flex-col items-center gap-4">
+          <span class="h-10 w-10 animate-spin rounded-full border-2 border-line border-t-brand"></span>
+          <p class="text-sm text-muted">
+            Passage en mode <strong class="text-ink">{{ auth.mode === "beginner" ? "Débutant" : "Confirmé" }}</strong>…
+          </p>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
+
   <div class="mx-auto max-w-xl px-5 py-10">
     <h1 class="h-display text-3xl font-semibold">Réglages</h1>
 
@@ -98,3 +114,14 @@ const modes = [
     </div>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

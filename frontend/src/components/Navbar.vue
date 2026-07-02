@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import EmergencyStop from "./EmergencyStop.vue";
@@ -6,13 +7,14 @@ import EmergencyStop from "./EmergencyStop.vue";
 const auth = useAuthStore();
 const router = useRouter();
 
-const links = [
+const links = computed(() => [
   { to: "/", label: "Portefeuille" },
   { to: "/goals", label: "Objectifs" },
   { to: "/trends", label: "Tendances" },
   { to: "/history", label: "Historique" },
+  ...(auth.isBeginner ? [{ to: "/learn", label: "Apprendre" }] : []),
   { to: "/settings", label: "Réglages" },
-];
+]);
 
 async function logout() {
   await auth.signOut();

@@ -38,6 +38,7 @@ export const api = {
     const qs = new URLSearchParams(params).toString();
     return request("GET", `/trades${qs ? `?${qs}` : ""}`);
   },
+  syncTrades: () => request("POST", "/trades/sync"),
 
   trends: () => request("GET", "/market/trends"),
   marketBases: (exchange = "kraken") => request("GET", `/market/bases?exchange=${exchange}`),
