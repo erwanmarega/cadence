@@ -97,4 +97,8 @@ def sync_trades(user_id: str = Depends(get_current_user_id)):
             except Exception:
                 imported = 0
 
+    if imported:
+        from app.services import notifications
+        notifications.check_goals_reached(user_id)
+
     return {"imported": imported, "fetched": len(rows), "errors": errors}

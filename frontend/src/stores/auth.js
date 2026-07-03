@@ -14,6 +14,10 @@ export const useAuthStore = defineStore("auth", () => {
   const isBeginner = computed(() => mode.value === "beginner");
 
   const onboarded = computed(() => mode.value === "beginner" || mode.value === "advanced");
+  const fullName = computed(() => {
+    const m = user.value?.user_metadata || {};
+    return [m.first_name, m.last_name].filter(Boolean).join(" ") || m.full_name || "";
+  });
 
   async function init() {
     const { data } = await supabase.auth.getSession();
@@ -65,9 +69,19 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  async function setProfile(firstName, lastName) {
+    const first_name = firstName.trim();
+    const last_name = lastName.trim();
+    const { data, error } = await supabase.auth.updateUser({
+      data: { first_name, last_name, full_name: `${first_name} ${last_name}`.trim() },
+    });
+    if (error) throw new Error(error.message);
+    if (data?.user) user.value = data.user;
+  }
+
   return {
     user, mode, ready,
-    isAuthenticated, isBeginner, onboarded,
-    init, signIn, signUp, signInWithGoogle, signOut, setMode,
+    isAuthenticated, isBeginner, onboarded, fullName,
+    init, signIn, signUp, signInWithGoogle, signOut, setMode, setProfile,
   };
 });

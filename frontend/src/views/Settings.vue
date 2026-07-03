@@ -110,6 +110,7 @@ const modes = [
     </button>
 
     <div class="card mt-4 text-sm text-muted">
+      <span v-if="auth.fullName" class="block text-ink">{{ auth.fullName }}</span>
       Connecté en tant que <span class="text-ink">{{ auth.user?.email }}</span>
     </div>
   </div>

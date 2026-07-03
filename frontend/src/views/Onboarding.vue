@@ -1,5 +1,4 @@
 <script setup>
-
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
@@ -11,15 +10,38 @@ const step = ref(0);
 const answers = ref({ knowledge: null, guidance: null });
 const busy = ref(false);
 
+const meta = auth.user?.user_metadata || {};
+const guessed = (meta.full_name || meta.name || "").trim().split(" ");
+const firstName = ref(meta.first_name || guessed[0] || "");
+const lastName = ref(meta.last_name || (guessed.length > 1 ? guessed.slice(1).join(" ") : ""));
+const nameError = ref("");
+
 const suggestedMode = computed(() => {
   const { knowledge, guidance } = answers.value;
   if (knowledge === "none" || guidance === "guided") return "beginner";
   return "advanced";
 });
 
+async function continueName() {
+  if (!firstName.value.trim() || !lastName.value.trim()) {
+    nameError.value = "Renseigne ton prénom et ton nom.";
+    return;
+  }
+  nameError.value = "";
+  busy.value = true;
+  try {
+    await auth.setProfile(firstName.value, lastName.value);
+    step.value = 1;
+  } catch (e) {
+    nameError.value = e.message;
+  } finally {
+    busy.value = false;
+  }
+}
+
 function pick(key, value) {
   answers.value[key] = value;
-  if (step.value < 2) step.value++;
+  if (step.value < 3) step.value++;
 }
 
 async function finish(mode) {
@@ -39,7 +61,7 @@ async function finish(mode) {
 
       <div class="mb-8 flex items-center justify-center gap-1.5">
         <span
-          v-for="i in 3"
+          v-for="i in 4"
           :key="i"
           class="h-1.5 rounded-full transition-all"
           :class="i - 1 <= step ? 'w-8 bg-brand' : 'w-4 bg-line-strong'"
@@ -47,10 +69,26 @@ async function finish(mode) {
       </div>
 
       <div class="card">
-        <p v-if="step < 2" class="field-label !text-brand">Faisons connaissance · 1 min</p>
-
+        <p v-if="step < 3" class="field-label !text-brand">Faisons connaissance · 1 min</p>
 
         <div v-if="step === 0">
+          <h2 class="h-display text-2xl font-semibold">Comment tu t'appelles ?</h2>
+          <p class="mt-1 text-sm text-muted">Pour personnaliser ton espace et tes relevés.</p>
+          <div class="mt-5 space-y-3">
+            <div>
+              <label class="field-label">Prénom</label>
+              <input v-model="firstName" class="field" autocomplete="given-name" placeholder="Erwan" />
+            </div>
+            <div>
+              <label class="field-label">Nom</label>
+              <input v-model="lastName" class="field" autocomplete="family-name" placeholder="Marega" />
+            </div>
+            <p v-if="nameError" class="text-sm text-danger">{{ nameError }}</p>
+            <button class="btn-primary w-full" :disabled="busy" @click="continueName">Continuer</button>
+          </div>
+        </div>
+
+        <div v-else-if="step === 1">
           <h2 class="h-display text-2xl font-semibold">Tu connais la crypto ?</h2>
           <p class="mt-1 text-sm text-muted">Et l'investissement automatique (DCA) ?</p>
           <div class="mt-5 space-y-2.5">
@@ -64,9 +102,10 @@ async function finish(mode) {
               <strong>Je suis à l'aise</strong><span>Exchanges, API, DCA — ça me parle.</span>
             </button>
           </div>
+          <button class="btn-ghost mt-4" @click="step = 0">← Retour</button>
         </div>
 
-        <div v-else-if="step === 1">
+        <div v-else-if="step === 2">
           <h2 class="h-display text-2xl font-semibold">Comment t'accompagner ?</h2>
           <div class="mt-5 space-y-2.5">
             <button class="onb-opt" @click="pick('guidance', 'guided')">
@@ -76,9 +115,8 @@ async function finish(mode) {
               <strong>Accès direct</strong><span>Interface dense, sans pop-ups.</span>
             </button>
           </div>
-          <button class="btn-ghost mt-4" @click="step = 0">← Retour</button>
+          <button class="btn-ghost mt-4" @click="step = 1">← Retour</button>
         </div>
-
 
         <div v-else>
           <h2 class="h-display text-2xl font-semibold">

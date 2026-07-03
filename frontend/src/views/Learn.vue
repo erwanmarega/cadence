@@ -85,7 +85,7 @@ const glossary = [
       </div>
     </dl>
 
-    <div class="mt-10 rounded-[var(--radius-xl2)] bg-brand p-6 text-center text-white">
+    <div class="mt-10 rounded-xl2 bg-brand p-6 text-center text-white">
       <h3 class="h-display text-xl font-semibold">Prêt à te lancer ?</h3>
       <p class="mt-1 text-white/80">Connecte un compte, crée ton premier plan. On te guide pas à pas.</p>
       <button class="btn mt-4 bg-white text-brand hover:bg-white/90" @click="router.push({ name: 'strategy-new' })">

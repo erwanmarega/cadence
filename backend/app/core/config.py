@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     env: str = "development"
     cors_origins: str = "http://localhost:5173"
 
+    resend_api_key: Optional[str] = None
+    resend_from: str = "Cadence <onboarding@resend.dev>"
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

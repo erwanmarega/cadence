@@ -123,6 +123,7 @@ def execute_strategy(strategy: dict) -> dict:
 
     any_success = False
     last_error: str | None = None
+    executed: list[tuple[str, float]] = []
 
     try:
         client = exchange_service.client_from_connection(conn)
@@ -130,13 +131,14 @@ def execute_strategy(strategy: dict) -> dict:
         client = None
         last_error = str(exc)
 
+    quote = strategy["quote_currency"]
     for symbol, amount in _legs(strategy):
         trade = {
             "strategy_id": strategy["id"],
             "user_id": strategy["user_id"],
             "symbol": symbol,
             "amount": amount,
-            "quote_currency": strategy["quote_currency"],
+            "quote_currency": quote,
             "executed_at": datetime.now(timezone.utc).isoformat(),
         }
         if client is None:
@@ -150,6 +152,7 @@ def execute_strategy(strategy: dict) -> dict:
                     filled=order.get("filled"),
                 )
                 any_success = True
+                executed.append((symbol.split("/")[0], amount))
             except Exception as exc:
                 last_error = str(exc)
                 trade.update(status="failed", error=last_error)
@@ -188,7 +191,31 @@ def execute_strategy(strategy: dict) -> dict:
         updates["last_error"] = None
 
     sb.table("strategies").update(updates).eq("id", strategy["id"]).execute()
+
+    _notify_run(strategy, executed, any_success, last_error, updates.get("status") == "error")
     return updates
+
+
+def _notify_run(strategy, executed, any_success, last_error, suspended):
+    from app.services import notifications
+
+    user_id = strategy["user_id"]
+    quote = strategy["quote_currency"]
+    if any_success:
+        detail = ", ".join(f"{amount} {quote} de {base}" for base, amount in executed)
+        notifications.notify(user_id, "buy_executed", "Achat exécuté", f"Cadence a acheté {detail}.")
+        notifications.check_goals_reached(user_id)
+    elif suspended:
+        notifications.notify(
+            user_id, "plan_suspended", "Plan suspendu",
+            f"Un plan a été suspendu après plusieurs échecs. Dernière erreur : {last_error}. "
+            "Vérifie ton solde et ta clé API, puis réactive-le.",
+        )
+    else:
+        notifications.notify(
+            user_id, "buy_failed", "Achat échoué",
+            f"Un achat n'a pas pu être exécuté. Erreur : {last_error}.",
+        )
 
 
 def run_due_strategies() -> int:

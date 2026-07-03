@@ -63,6 +63,9 @@ export const api = {
     return request("GET", `/simulate?${qs}`);
   },
 
+  listNotifications: () => request("GET", "/notifications"),
+  markNotificationsRead: (ids = null) => request("POST", "/notifications/read", { ids }),
+
   listGoals: () => request("GET", "/goals"),
   createGoal: (payload) => request("POST", "/goals", payload),
   deleteGoal: (id) => request("DELETE", `/goals/${id}`),
