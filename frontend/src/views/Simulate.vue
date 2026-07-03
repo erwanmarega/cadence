@@ -127,7 +127,7 @@ function fmt(n) {
         <h2 class="h-display text-2xl font-semibold">Pourquoi pas juste l'achat récurrent de mon exchange&nbsp;?</h2>
         <p class="mt-1 text-muted">Kraken ou Coinbase le proposent. Voici ce que Cadence apporte en plus.</p>
 
-        <div class="mt-5 overflow-hidden rounded-[var(--radius-xl2)] border border-line">
+        <div class="mt-5 overflow-hidden rounded-xl2 border border-line">
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-line bg-paper-2/50 text-left">
@@ -159,7 +159,7 @@ function fmt(n) {
           pendant {{ form.years }} an{{ form.years > 1 ? "s" : "" }} ({{ result.buys }} achats) :
         </p>
 
-        <div class="card mt-3 bg-gradient-to-br from-surface to-brand-soft/30">
+        <div class="card mt-3 bg-linear-to-br from-surface to-brand-soft/30">
           <div class="grid gap-6 sm:grid-cols-3">
             <div>
               <p class="field-label">Tu aurais investi</p>
@@ -188,7 +188,7 @@ function fmt(n) {
         </div>
 
 
-        <div class="mt-6 rounded-[var(--radius-xl2)] bg-brand p-6 text-center text-white">
+        <div class="mt-6 rounded-xl2 bg-brand p-6 text-center text-white">
           <h3 class="h-display text-2xl font-semibold">Lance ton épargne pour de vrai</h3>
           <p class="mt-1 text-white/80">Automatique, sur ton compte, en quelques minutes.</p>
           <button class="btn mt-4 bg-white text-brand hover:bg-white/90" @click="router.push({ name: 'login' })">

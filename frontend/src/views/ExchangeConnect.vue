@@ -58,7 +58,7 @@ async function confirmRemove() {
     <RouterLink to="/settings" class="mb-4 inline-block text-sm text-muted hover:text-ink">← Réglages</RouterLink>
     <h1 class="h-display text-3xl font-semibold">Comptes d'échange</h1>
 
-    <div class="mt-5 rounded-[var(--radius-xl2)] border border-brand/25 bg-brand-soft/50 p-5">
+    <div class="mt-5 rounded-xl2 border border-brand/25 bg-brand-soft/50 p-5">
       <div class="flex items-start gap-3">
         <span class="text-lg">🔒</span>
         <div>
@@ -75,7 +75,7 @@ async function confirmRemove() {
 
 
     <div v-if="connections.length" class="mt-6 space-y-3">
-      <div v-for="c in connections" :key="c.id" class="card flex items-center justify-between !p-4">
+      <div v-for="c in connections" :key="c.id" class="card flex items-center justify-between p-4">
         <div class="flex items-center gap-3">
           <span class="grid h-9 w-9 place-items-center rounded-lg bg-paper-2 text-sm font-semibold capitalize">
             {{ c.exchange[0] }}

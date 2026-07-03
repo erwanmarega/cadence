@@ -69,7 +69,7 @@ async function finish(mode) {
       </div>
 
       <div class="card">
-        <p v-if="step < 3" class="field-label !text-brand">Faisons connaissance · 1 min</p>
+        <p v-if="step < 3" class="field-label text-brand">Faisons connaissance · 1 min</p>
 
         <div v-if="step === 0">
           <h2 class="h-display text-2xl font-semibold">Comment tu t'appelles ?</h2>

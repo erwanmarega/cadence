@@ -96,7 +96,7 @@ async function disable(factorId) {
     <h1 class="h-display text-3xl font-semibold">Sécurité</h1>
 
 
-    <div class="mt-6 rounded-[var(--radius-xl2)] border border-brand/25 bg-brand-soft/50 p-6">
+    <div class="mt-6 rounded-xl2 border border-brand/25 bg-brand-soft/50 p-6">
       <div class="flex items-start gap-3">
         <span class="text-2xl">🔒</span>
         <div>
