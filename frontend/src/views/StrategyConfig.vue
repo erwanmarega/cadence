@@ -28,6 +28,10 @@ const form = ref({
   run_time: "09:00",
   run_weekday: 0,
   run_day_of_month: 1,
+  dip_enabled: false,
+  dip_pct: 10,
+  dip_window: 30,
+  dip_multiplier: 2,
 });
 const error = ref("");
 const busy = ref(false);
@@ -113,6 +117,12 @@ async function submit() {
     payload.allocations = form.value.allocations.map((a) => ({ base: a.base, weight: Number(a.weight) }));
   } else {
     payload.symbol = symbol.value;
+  }
+  if (advanced.value && form.value.dip_enabled) {
+    payload.dip_enabled = true;
+    payload.dip_pct = Number(form.value.dip_pct);
+    payload.dip_window = Number(form.value.dip_window);
+    payload.dip_multiplier = Number(form.value.dip_multiplier);
   }
 
   busy.value = true;
@@ -248,6 +258,48 @@ async function submit() {
             <option v-for="d in 28" :key="d" :value="d">{{ d }}</option>
           </select>
         </div>
+      </div>
+
+      <div v-if="advanced" class="rounded-xl border border-line-strong p-4">
+        <label class="flex cursor-pointer items-start gap-3">
+          <input v-model="form.dip_enabled" type="checkbox" class="mt-1" />
+          <span>
+            <span class="font-medium">Acheter plus quand ça baisse</span>
+            <span class="mt-0.5 block text-sm text-muted">
+              Achat régulier normal, mais montant multiplié si le prix passe sous sa moyenne récente.
+            </span>
+          </span>
+        </label>
+
+        <div v-if="form.dip_enabled" class="mt-4 grid grid-cols-3 gap-3">
+          <div>
+            <label class="field-label">Baisse ≥</label>
+            <div class="flex items-center gap-1">
+              <input v-model.number="form.dip_pct" type="number" min="1" max="90" class="field !py-2" />
+              <span class="text-sm text-muted">%</span>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Moyenne sur</label>
+            <div class="flex items-center gap-1">
+              <input v-model.number="form.dip_window" type="number" min="2" max="200" class="field !py-2" />
+              <span class="text-sm text-muted">j</span>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Montant ×</label>
+            <input v-model.number="form.dip_multiplier" type="number" min="1.1" max="10" step="0.5" class="field !py-2" />
+          </div>
+        </div>
+
+        <p v-if="form.dip_enabled" class="mt-3 text-xs text-muted">
+          Ex : ton achat passe à <strong class="text-ink">{{ (form.amount * form.dip_multiplier).toFixed(0) }} {{ form.quote_currency }}</strong>
+          quand le prix est {{ form.dip_pct }}% sous sa moyenne {{ form.dip_window }} jours (sinon {{ form.amount }} {{ form.quote_currency }}).
+          Prévois assez de fonds pour les achats boostés.
+        </p>
+        <p v-if="form.dip_enabled" class="mt-2 rounded-lg bg-amber-soft px-3 py-2 text-xs text-amber">
+          ⚠️ Attendre ou surpondérer les baisses sous-performe souvent un DCA régulier. C'est une option, pas une garantie.
+        </p>
       </div>
 
       <div class="rounded-xl bg-brand-soft/50 px-4 py-3 text-sm text-brand-ink">

@@ -60,6 +60,10 @@ def create_strategy(
         "run_minute": body.run_minute,
         "run_weekday": body.run_weekday,
         "run_day_of_month": body.run_day_of_month,
+        "dip_enabled": body.dip_enabled,
+        "dip_pct": body.dip_pct,
+        "dip_window": body.dip_window,
+        "dip_multiplier": body.dip_multiplier,
         "next_run_at": first_run.isoformat(),
     }
     resp = sb.table("strategies").insert(row).execute()
