@@ -69,7 +69,7 @@ onMounted(() => load());
     <template v-else>
       <div class="mt-6 flex items-center gap-3">
         <label class="field-label mb-0">Année</label>
-        <select :value="year" class="field max-w-[8rem]" @change="load(Number($event.target.value))">
+        <select :value="year" class="field max-w-32" @change="load(Number($event.target.value))">
           <option v-for="y in data.years" :key="y" :value="y">{{ y }}</option>
         </select>
       </div>

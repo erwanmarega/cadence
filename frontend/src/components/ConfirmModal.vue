@@ -31,7 +31,7 @@ watch(
       <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-ink/40 backdrop-blur-sm" @click="close"></div>
 
-        <div class="relative w-full max-w-sm rounded-[var(--radius-xl2)] border border-line bg-surface p-6 shadow-xl"
+        <div class="relative w-full max-w-sm rounded-xl2 border border-line bg-surface p-6 shadow-xl"
              role="dialog" aria-modal="true">
           <div v-if="danger" class="mb-4 grid h-11 w-11 place-items-center rounded-full bg-danger-soft text-xl">⏸</div>
           <h3 class="h-display text-xl font-semibold">{{ title }}</h3>

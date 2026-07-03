@@ -67,7 +67,7 @@ function fmtDate(d) {
       Aucun achat encore. Crée un plan, ou synchronise tes achats déjà faits sur tes exchanges.
     </div>
 
-    <div v-else-if="trades.length" class="card mt-6 !p-0 overflow-hidden">
+    <div v-else-if="trades.length" class="card mt-6 p-0 overflow-hidden">
       <table class="w-full text-sm">
         <thead>
           <tr class="border-b border-line text-left text-xs uppercase tracking-wide text-muted">

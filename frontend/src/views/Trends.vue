@@ -53,7 +53,7 @@ function fmtTime(d) {
     </div>
 
 
-    <div class="mt-5 rounded-[var(--radius-xl2)] border border-line bg-paper-2/60 px-5 py-4 text-sm text-ink-soft">
+    <div class="mt-5 rounded-xl2 border border-line bg-paper-2/60 px-5 py-4 text-sm text-ink-soft">
       <strong>ℹ️ Information, pas conseil.</strong>
       Cadence te montre ce qui se passe sur le marché, jamais ce que tu devrais
       faire. Ces données ne sont pas une recommandation d'achat ou de vente. Ta
@@ -65,7 +65,7 @@ function fmtTime(d) {
 
     <div v-else class="mt-6 grid gap-5 md:grid-cols-2">
 
-      <section class="card !p-0 overflow-hidden">
+      <section class="card p-0 overflow-hidden">
         <header class="flex items-center gap-2 border-b border-line px-5 py-3">
           <span class="badge badge-success">En hausse</span>
           <span class="text-sm text-muted">{{ gainers.length }} sur 24h</span>
@@ -89,7 +89,7 @@ function fmtTime(d) {
       </section>
 
 
-      <section class="card !p-0 overflow-hidden">
+      <section class="card p-0 overflow-hidden">
         <header class="flex items-center gap-2 border-b border-line px-5 py-3">
           <span class="badge badge-failed">En baisse</span>
           <span class="text-sm text-muted">{{ losers.length }} sur 24h</span>

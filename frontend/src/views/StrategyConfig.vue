@@ -139,7 +139,7 @@ async function submit() {
 
 <template>
   <div class="mx-auto max-w-xl px-5 py-10">
-    <button class="btn-ghost mb-4 !px-0 hover:!bg-transparent" @click="router.back()">← Retour</button>
+    <button class="btn-ghost mb-4 px-0 hover:bg-transparent" @click="router.back()">← Retour</button>
     <h1 class="h-display text-3xl font-semibold">Nouveau plan d'épargne</h1>
 
     <p v-if="auth.isBeginner" class="mt-3 rounded-xl border border-line bg-paper-2/60 px-4 py-3 text-sm text-ink-soft">
@@ -212,7 +212,7 @@ async function submit() {
           <div v-for="(a, i) in form.allocations" :key="i" class="flex items-center gap-2">
             <div class="flex-1"><CryptoSelect v-model="a.base" :options="coins" /></div>
             <div class="flex w-24 items-center gap-1">
-              <input v-model.number="a.weight" type="number" min="0" max="100" class="field !py-2" />
+              <input v-model.number="a.weight" type="number" min="0" max="100" class="field py-2" />
               <span class="text-sm text-muted">%</span>
             </div>
             <button type="button" class="text-muted hover:text-danger" :disabled="form.allocations.length <= 2"
@@ -275,20 +275,20 @@ async function submit() {
           <div>
             <label class="field-label">Baisse ≥</label>
             <div class="flex items-center gap-1">
-              <input v-model.number="form.dip_pct" type="number" min="1" max="90" class="field !py-2" />
+              <input v-model.number="form.dip_pct" type="number" min="1" max="90" class="field py-2" />
               <span class="text-sm text-muted">%</span>
             </div>
           </div>
           <div>
             <label class="field-label">Moyenne sur</label>
             <div class="flex items-center gap-1">
-              <input v-model.number="form.dip_window" type="number" min="2" max="200" class="field !py-2" />
+              <input v-model.number="form.dip_window" type="number" min="2" max="200" class="field py-2" />
               <span class="text-sm text-muted">j</span>
             </div>
           </div>
           <div>
             <label class="field-label">Montant ×</label>
-            <input v-model.number="form.dip_multiplier" type="number" min="1.1" max="10" step="0.5" class="field !py-2" />
+            <input v-model.number="form.dip_multiplier" type="number" min="1.1" max="10" step="0.5" class="field py-2" />
           </div>
         </div>
 

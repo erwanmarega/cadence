@@ -66,7 +66,7 @@ const glossary = [
     </div>
 
     <div class="mt-6 space-y-3">
-      <div v-for="(s, i) in sections" :key="i" class="card !p-0 overflow-hidden">
+      <div v-for="(s, i) in sections" :key="i" class="card p-0 overflow-hidden">
         <button class="flex w-full items-center justify-between gap-4 px-5 py-4 text-left" @click="toggle(i)">
           <span class="font-medium">{{ s.q }}</span>
           <span class="text-muted transition-transform" :class="open === i ? 'rotate-45' : ''">+</span>
