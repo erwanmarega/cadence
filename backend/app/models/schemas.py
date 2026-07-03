@@ -61,6 +61,11 @@ class TimingFields(BaseModel):
     run_weekday: Optional[int] = Field(default=None, ge=0, le=6)
     run_day_of_month: Optional[int] = Field(default=None, ge=1, le=28)
 
+    dip_enabled: bool = False
+    dip_pct: float = Field(default=10, gt=0, le=90)
+    dip_window: int = Field(default=30, ge=2, le=200)
+    dip_multiplier: float = Field(default=2, gt=1, le=10)
+
 
 class StrategyCreate(TimingFields):
     exchange_connection_id: str
@@ -98,6 +103,10 @@ class StrategyUpdate(BaseModel):
     run_minute: Optional[int] = Field(default=None, ge=0, le=59)
     run_weekday: Optional[int] = Field(default=None, ge=0, le=6)
     run_day_of_month: Optional[int] = Field(default=None, ge=1, le=28)
+    dip_enabled: Optional[bool] = None
+    dip_pct: Optional[float] = Field(default=None, gt=0, le=90)
+    dip_window: Optional[int] = Field(default=None, ge=2, le=200)
+    dip_multiplier: Optional[float] = Field(default=None, gt=1, le=10)
 
 
 class StrategyOut(BaseModel):
@@ -114,6 +123,10 @@ class StrategyOut(BaseModel):
     run_minute: int = 0
     run_weekday: Optional[int] = None
     run_day_of_month: Optional[int] = None
+    dip_enabled: bool = False
+    dip_pct: Optional[float] = None
+    dip_window: Optional[int] = None
+    dip_multiplier: Optional[float] = None
     consecutive_failures: int = 0
     last_error: Optional[str] = None
     created_at: datetime

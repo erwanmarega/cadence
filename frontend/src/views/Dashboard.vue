@@ -219,6 +219,10 @@ function planDetail(s) {
               </p>
               <p v-if="planDetail(s)" class="text-xs text-muted">{{ planDetail(s) }}</p>
               <p class="text-sm text-muted">{{ fmtInterval(s.interval) }}</p>
+              <span v-if="s.dip_enabled" class="badge badge-active mt-1 inline-flex"
+                    :title="`× ${s.dip_multiplier} si le prix est ${s.dip_pct}% sous sa moyenne ${s.dip_window} j`">
+                ↓ Boost baisse
+              </span>
             </div>
           </div>
 

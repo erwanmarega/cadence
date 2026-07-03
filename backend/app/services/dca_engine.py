@@ -97,6 +97,32 @@ def next_run_after(interval: Interval, base: datetime | None = None) -> datetime
     return compute_first_run(interval, now=base)
 
 
+def dip_amount(client, symbol: str, base_amount: float, strategy: dict) -> float:
+    """If dip-boost is on and the price is below its N-day average by the set
+    percentage, multiply the buy amount. Otherwise return the base amount.
+
+    The user defines the threshold — Cadence never suggests a "good" price.
+    """
+    if not strategy.get("dip_enabled"):
+        return base_amount
+    try:
+        window = int(strategy.get("dip_window") or 30)
+        ohlcv = client.fetch_ohlcv(symbol, "1d", limit=window + 1)
+        closes = [c[4] for c in ohlcv if c[4]]
+        if len(closes) < 3:
+            return base_amount
+        current = closes[-1]
+        history = closes[:-1]
+        ma = sum(history) / len(history)
+        pct = float(strategy.get("dip_pct") or 10)
+        if current <= ma * (1 - pct / 100):
+            mult = float(strategy.get("dip_multiplier") or 2)
+            return round(base_amount * mult, 2)
+    except Exception:
+        pass
+    return base_amount
+
+
 def _legs(strategy: dict) -> list[tuple[str, float]]:
     quote = strategy["quote_currency"]
     amount = float(strategy["amount"])
@@ -145,6 +171,8 @@ def execute_strategy(strategy: dict) -> dict:
             trade.update(status="failed", error=last_error)
         else:
             try:
+                amount = dip_amount(client, symbol, amount, strategy)
+                trade["amount"] = amount
                 order = exchange_service.place_market_buy(client, symbol, amount)
                 trade.update(
                     status="success",
