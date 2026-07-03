@@ -12,7 +12,6 @@ from datetime import datetime, timezone
 import ccxt
 from fastapi import APIRouter, HTTPException, Query
 
-from app.core.assets import CURATED_BASES
 
 router = APIRouter(prefix="/market", tags=["market"])
 

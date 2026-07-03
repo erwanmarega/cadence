@@ -7,7 +7,7 @@ relative to the target. Purely a savings/motivation feature — never advice.
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field, field_validator
 
 from app.api.routes.portfolio import compute_positions

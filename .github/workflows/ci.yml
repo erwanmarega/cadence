@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (lint + tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      # Valeurs factices : les imports chargent les settings paresseusement,
+      # aucun vrai secret n'est nécessaire pour lint + tests unitaires.
+      SUPABASE_URL: https://example.supabase.co
+      SUPABASE_SERVICE_KEY: dummy-service-key
+      ENCRYPTION_KEY: SXs37wp9VI3qJ8epUhS3jxJunJahqWrCb5usmXBwT8g=
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest ruff
+
+      - name: Lint (ruff, pyflakes)
+        run: ruff check app --select F
+
+      - name: Compile check
+        run: python -m compileall -q app
+
+      - name: Tests
+        run: python -m pytest -q
+
+  frontend:
+    name: Frontend (build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
