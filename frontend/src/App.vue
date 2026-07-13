@@ -2,10 +2,13 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "./stores/auth";
+import { useIdleTimeout } from "./lib/idleTimeout";
 import Navbar from "./components/Navbar.vue";
 
 const route = useRoute();
 const auth = useAuthStore();
+
+useIdleTimeout();
 
 
 const showNav = computed(

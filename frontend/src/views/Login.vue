@@ -1,11 +1,14 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { supabase } from "../lib/supabase";
 
 const auth = useAuthStore();
 const router = useRouter();
+const route = useRoute();
+
+const timedOut = ref(route.query.timeout === "1");
 
 const isSignup = ref(false);
 const email = ref("");
@@ -141,6 +144,10 @@ async function submitMfa() {
           </h2>
           <p class="mt-1 text-muted">
             {{ isSignup ? "Quelques secondes, puis on configure ton épargne." : "Connecte-toi pour reprendre où tu en étais." }}
+          </p>
+
+          <p v-if="timedOut" class="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            Tu as été déconnecté après 15 minutes d'inactivité. Reconnecte-toi pour continuer.
           </p>
 
           <button type="button" class="btn-secondary mt-8 w-full" :disabled="busy" @click="google">
