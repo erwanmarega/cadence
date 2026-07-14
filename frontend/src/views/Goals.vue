@@ -5,6 +5,7 @@ import { useAuthStore } from "../stores/auth";
 import { CURATED_BASES } from "../lib/assets";
 import CryptoSelect from "../components/CryptoSelect.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
+import Spinner from "../components/Spinner.vue";
 
 const auth = useAuthStore();
 const goals = ref([]);
@@ -132,12 +133,20 @@ function fmtMoney(n, cur = "EUR") {
       </div>
       <p v-if="error" class="text-sm text-danger">{{ error }}</p>
       <div class="flex gap-3">
-        <button type="submit" class="btn-primary" :disabled="saving">Créer l'objectif</button>
+        <button type="submit" class="btn-primary flex items-center gap-2" :disabled="saving">
+          <Spinner v-if="saving" size="1rem" />
+          {{ saving ? "Création…" : "Créer l'objectif" }}
+        </button>
         <button type="button" class="btn-ghost" @click="showForm = false">Annuler</button>
       </div>
     </form>
 
-    <div v-if="!loading && !goals.length && !showForm" class="card mt-6 text-center">
+    <div v-if="loading && !goals.length && !showForm" class="mt-10 flex flex-col items-center gap-3 text-muted">
+      <Spinner size="2rem" />
+      <span class="text-sm">Chargement de tes objectifs…</span>
+    </div>
+
+    <div v-else-if="!loading && !goals.length && !showForm" class="card mt-6 text-center">
       <div class="mx-auto max-w-md py-6">
         <div class="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-brand-soft text-xl">🎯</div>
         <h3 class="h-display text-xl font-semibold">Aucun objectif</h3>

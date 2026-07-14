@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { api } from "../lib/api";
+import Spinner from "../components/Spinner.vue";
 
 const loading = ref(true);
 const downloading = ref(false);
@@ -60,7 +61,10 @@ onMounted(() => load());
       </p>
     </div>
 
-    <div v-if="loading" class="mt-8 text-muted">Chargement…</div>
+    <div v-if="loading" class="mt-10 flex flex-col items-center gap-3 text-muted">
+      <Spinner size="2rem" />
+      <span class="text-sm">Chargement de ton relevé…</span>
+    </div>
 
     <div v-else-if="!data?.years?.length" class="card mt-8 text-center">
       <p class="text-muted">Aucun achat exécuté pour l'instant. Ton relevé apparaîtra ici après tes premiers achats DCA.</p>
@@ -105,7 +109,8 @@ onMounted(() => load());
         </div>
       </div>
 
-      <button class="btn-primary mt-5 w-full" :disabled="downloading" @click="download">
+      <button class="btn-primary mt-5 flex w-full items-center justify-center gap-2" :disabled="downloading" @click="download">
+        <Spinner v-if="downloading" size="1rem" />
         {{ downloading ? "Génération…" : `Télécharger le relevé ${year} (CSV)` }}
       </button>
       <p class="mt-2 text-center text-xs text-muted">

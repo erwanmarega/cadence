@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { supabase } from "../lib/supabase";
+import Spinner from "../components/Spinner.vue";
 
 const factors = ref([]);
 const loading = ref(true);
@@ -131,14 +132,18 @@ async function disable(factorId) {
       <p v-if="error" class="mt-4 text-sm text-danger">{{ error }}</p>
 
       <div v-if="hasVerified && !enrolling" class="mt-5">
-        <button class="btn-secondary text-danger" :disabled="busy"
+        <button class="btn-secondary flex items-center gap-2 text-danger" :disabled="busy"
                 @click="disable(factors.find((f) => f.status === 'verified').id)">
-          Désactiver la 2FA
+          <Spinner v-if="busy" size="1rem" />
+          {{ busy ? "Désactivation…" : "Désactiver la 2FA" }}
         </button>
       </div>
 
       <div v-else-if="!enrolling" class="mt-5">
-        <button class="btn-primary" :disabled="busy || loading" @click="startEnroll">Activer la 2FA</button>
+        <button class="btn-primary flex items-center gap-2" :disabled="busy || loading" @click="startEnroll">
+          <Spinner v-if="busy || loading" size="1rem" />
+          {{ busy ? "Préparation…" : "Activer la 2FA" }}
+        </button>
       </div>
 
       <div v-else class="mt-5 space-y-4">
@@ -156,7 +161,10 @@ async function disable(factorId) {
           <input v-model="code" inputmode="numeric" maxlength="6" class="field tracking-widest" placeholder="123456" />
         </div>
         <div class="flex gap-3">
-          <button class="btn-primary" :disabled="busy || code.length < 6" @click="verifyEnroll">Vérifier et activer</button>
+          <button class="btn-primary flex items-center gap-2" :disabled="busy || code.length < 6" @click="verifyEnroll">
+            <Spinner v-if="busy" size="1rem" />
+            {{ busy ? "Vérification…" : "Vérifier et activer" }}
+          </button>
           <button class="btn-ghost" :disabled="busy" @click="cancelEnroll">Annuler</button>
         </div>
       </div>

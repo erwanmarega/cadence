@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { api } from "../lib/api";
+import Spinner from "../components/Spinner.vue";
 
 const trades = ref([]);
 const loading = ref(false);
@@ -53,7 +54,8 @@ function fmtDate(d) {
           Les achats du bot <span class="text-ink-soft">et</span> ceux faits directement sur tes exchanges.
         </p>
       </div>
-      <button class="btn-secondary" :disabled="syncing" @click="sync">
+      <button class="btn-secondary flex items-center gap-2" :disabled="syncing" @click="sync">
+        <Spinner v-if="syncing" size="1rem" />
         {{ syncing ? "Synchronisation…" : "↻ Synchroniser mes exchanges" }}
       </button>
     </div>
@@ -63,7 +65,12 @@ function fmtDate(d) {
       <p v-for="(e, i) in syncErrors" :key="i">{{ e }}</p>
     </div>
 
-    <div v-if="!loading && !trades.length" class="card mt-6 text-center text-muted">
+    <div v-if="loading && !trades.length" class="mt-10 flex flex-col items-center gap-3 text-muted">
+      <Spinner size="2rem" />
+      <span class="text-sm">Chargement de tes achats…</span>
+    </div>
+
+    <div v-else-if="!loading && !trades.length" class="card mt-6 text-center text-muted">
       Aucun achat encore. Crée un plan, ou synchronise tes achats déjà faits sur tes exchanges.
     </div>
 

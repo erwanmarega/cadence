@@ -7,6 +7,7 @@ import { useAuthStore } from "../stores/auth";
 import { CURATED_BASES } from "../lib/assets";
 import CryptoSelect from "../components/CryptoSelect.vue";
 import Tooltip from "../components/Tooltip.vue";
+import Spinner from "../components/Spinner.vue";
 
 const router = useRouter();
 const store = useStrategiesStore();
@@ -321,7 +322,10 @@ async function submit() {
 
       <p v-if="error" class="text-sm text-danger">{{ error }}</p>
       <div class="flex gap-3">
-        <button type="submit" class="btn-primary flex-1" :disabled="busy">Créer le plan</button>
+        <button type="submit" class="btn-primary flex flex-1 items-center justify-center gap-2" :disabled="busy">
+          <Spinner v-if="busy" size="1rem" />
+          {{ busy ? "Création…" : "Créer le plan" }}
+        </button>
         <button type="button" class="btn-ghost" @click="router.back()">Annuler</button>
       </div>
     </form>

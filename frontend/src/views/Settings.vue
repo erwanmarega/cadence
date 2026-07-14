@@ -4,6 +4,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { api } from "../lib/api";
+import Spinner from "../components/Spinner.vue";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -42,7 +43,7 @@ const modes = [
     <Transition name="fade">
       <div v-if="switching" class="fixed inset-0 z-50 grid place-items-center bg-paper/90 backdrop-blur-sm">
         <div class="flex flex-col items-center gap-4">
-          <span class="h-10 w-10 animate-spin rounded-full border-2 border-line border-t-brand"></span>
+          <Spinner size="2.5rem" class="text-brand" />
           <p class="text-sm text-muted">
             Passage en mode <strong class="text-ink">{{ auth.mode === "beginner" ? "Débutant" : "Confirmé" }}</strong>…
           </p>

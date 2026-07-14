@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import { useAuthStore } from "../stores/auth";
 import Tooltip from "../components/Tooltip.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
+import Spinner from "../components/Spinner.vue";
 
 const auth = useAuthStore();
 
@@ -116,7 +117,8 @@ async function confirmRemove() {
         permission de retrait, supprime-la et régénère-en une sans cette permission.
       </p>
       <p v-if="error" class="text-sm text-danger">{{ error }}</p>
-      <button type="submit" class="btn-primary w-full" :disabled="busy">
+      <button type="submit" class="btn-primary flex w-full items-center justify-center gap-2" :disabled="busy">
+        <Spinner v-if="busy" size="1rem" />
         {{ busy ? "Vérification…" : "Vérifier et connecter" }}
       </button>
     </form>

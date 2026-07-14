@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from "vue";
 import { api } from "../lib/api";
 import { useAuthStore } from "../stores/auth";
 import Tooltip from "../components/Tooltip.vue";
+import Spinner from "../components/Spinner.vue";
 
 const auth = useAuthStore();
 const coins = ref([]);
@@ -47,8 +48,9 @@ function fmtTime(d) {
           <span v-if="updatedAt" class="text-sm"> · maj {{ fmtTime(updatedAt) }}</span>
         </p>
       </div>
-      <button class="btn-secondary" :disabled="loading" @click="load">
-        {{ loading ? "…" : "Actualiser" }}
+      <button class="btn-secondary flex items-center gap-2" :disabled="loading" @click="load">
+        <Spinner v-if="loading" size="1rem" />
+        {{ loading ? "Actualisation…" : "Actualiser" }}
       </button>
     </div>
 
@@ -62,6 +64,11 @@ function fmtTime(d) {
     </div>
 
     <p v-if="error" class="mt-6 text-danger">{{ error }}</p>
+
+    <div v-else-if="loading && !gainers.length && !losers.length" class="mt-10 flex flex-col items-center gap-3 text-muted">
+      <Spinner size="2rem" />
+      <span class="text-sm">Chargement des tendances…</span>
+    </div>
 
     <div v-else class="mt-6 grid gap-5 md:grid-cols-2">
 

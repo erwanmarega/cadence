@@ -4,6 +4,7 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { api } from "../lib/api";
 import LineChart from "../components/LineChart.vue";
+import Spinner from "../components/Spinner.vue";
 
 const router = useRouter();
 
@@ -116,7 +117,8 @@ function fmt(n) {
             </select>
           </div>
         </div>
-        <button class="btn-primary mt-5 w-full" :disabled="loading" @click="run">
+        <button class="btn-primary mt-5 flex w-full items-center justify-center gap-2" :disabled="loading" @click="run">
+          <Spinner v-if="loading" size="1rem" />
           {{ loading ? "Calcul en cours…" : "Voir le résultat" }}
         </button>
         <p v-if="error" class="mt-3 text-sm text-danger">{{ error }}</p>

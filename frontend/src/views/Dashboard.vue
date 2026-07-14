@@ -7,6 +7,7 @@ import { useAuthStore } from "../stores/auth";
 import Tooltip from "../components/Tooltip.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import LineChart from "../components/LineChart.vue";
+import Spinner from "../components/Spinner.vue";
 
 const store = useStrategiesStore();
 const auth = useAuthStore();
@@ -103,6 +104,11 @@ function planDetail(s) {
       </span>
       <span class="whitespace-nowrap font-medium text-brand">Apprendre →</span>
     </RouterLink>
+
+    <div v-if="(store.loading || perfLoading) && !hasStrategies && !hasPositions" class="mt-10 flex flex-col items-center gap-3 text-muted">
+      <Spinner size="2rem" />
+      <span class="text-sm">Chargement de ton portefeuille…</span>
+    </div>
 
     <div v-if="hasPositions" class="card mt-6 bg-linear-to-br from-surface to-brand-soft/30">
       <div class="grid gap-6 sm:grid-cols-3">
