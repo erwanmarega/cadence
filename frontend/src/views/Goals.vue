@@ -13,6 +13,7 @@ const loading = ref(false);
 const error = ref("");
 
 const showForm = ref(false);
+const editingId = ref(null);
 const form = ref({ base: "BTC", target_amount: 1000, quote_currency: "EUR", title: "" });
 const saving = ref(false);
 
@@ -54,18 +55,55 @@ onMounted(async () => {
   if (imported > 0) await load();
 });
 
-async function create() {
+function resetForm() {
+  editingId.value = null;
+  form.value = { base: "BTC", target_amount: 1000, quote_currency: "EUR", title: "" };
+}
+
+function openCreate() {
+  if (showForm.value && !editingId.value) {
+    showForm.value = false;
+    return;
+  }
+  resetForm();
+  error.value = "";
+  showForm.value = true;
+}
+
+function startEdit(g) {
+  editingId.value = g.id;
+  form.value = {
+    base: g.base,
+    target_amount: g.target_amount,
+    quote_currency: g.quote_currency,
+    title: g.title || "",
+  };
+  error.value = "";
+  showForm.value = true;
+}
+
+function cancelForm() {
+  showForm.value = false;
+  resetForm();
+}
+
+async function save() {
   error.value = "";
   saving.value = true;
   try {
-    await api.createGoal({
+    const payload = {
       base: form.value.base,
       target_amount: Number(form.value.target_amount),
       quote_currency: form.value.quote_currency,
       title: form.value.title || null,
-    });
+    };
+    if (editingId.value) {
+      await api.updateGoal(editingId.value, payload);
+    } else {
+      await api.createGoal(payload);
+    }
     showForm.value = false;
-    form.value = { base: "BTC", target_amount: 1000, quote_currency: "EUR", title: "" };
+    resetForm();
     await load();
   } catch (e) {
     error.value = e.message;
@@ -98,7 +136,7 @@ function fmtMoney(n, cur = "EUR") {
         <h1 class="h-display text-3xl font-semibold">Tes objectifs</h1>
         <p class="mt-1 text-muted">Fixe un cap, suis ta progression.</p>
       </div>
-      <button class="btn-primary" @click="showForm = !showForm">+ Nouvel objectif</button>
+      <button class="btn-primary" @click="openCreate">+ Nouvel objectif</button>
     </div>
 
     <p v-if="auth.isBeginner" class="mt-4 rounded-xl border border-line bg-paper-2/60 px-4 py-3 text-sm text-ink-soft">
@@ -107,7 +145,10 @@ function fmtMoney(n, cur = "EUR") {
     </p>
 
 
-    <form v-if="showForm" class="card mt-5 space-y-4" @submit.prevent="create">
+    <form v-if="showForm" class="card mt-5 space-y-4" @submit.prevent="save">
+      <h3 class="h-display text-lg font-semibold">
+        {{ editingId ? "Modifier l'objectif" : "Nouvel objectif" }}
+      </h3>
       <div>
         <label class="field-label">Nom (optionnel)</label>
         <input v-model="form.title" class="field" placeholder="Ex : Mon épargne BTC" />
@@ -135,9 +176,9 @@ function fmtMoney(n, cur = "EUR") {
       <div class="flex gap-3">
         <button type="submit" class="btn-primary flex items-center gap-2" :disabled="saving">
           <Spinner v-if="saving" size="1rem" />
-          {{ saving ? "Création…" : "Créer l'objectif" }}
+          {{ saving ? "Enregistrement…" : editingId ? "Enregistrer" : "Créer l'objectif" }}
         </button>
-        <button type="button" class="btn-ghost" @click="showForm = false">Annuler</button>
+        <button type="button" class="btn-ghost" @click="cancelForm">Annuler</button>
       </div>
     </form>
 
@@ -165,7 +206,17 @@ function fmtMoney(n, cur = "EUR") {
               · {{ g.base }}
             </p>
           </div>
-          <button class="btn-ghost px-2 py-1 text-xs text-danger hover:bg-danger-soft" @click="toDelete = g">Supprimer</button>
+          <div class="flex items-center gap-1">
+            <button class="btn-ghost px-2 py-1 text-muted hover:text-ink" title="Modifier l'objectif"
+                    @click="startEdit(g)" aria-label="Modifier">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+              </svg>
+            </button>
+            <button class="btn-ghost px-2 py-1 text-xs text-danger hover:bg-danger-soft" @click="toDelete = g">Supprimer</button>
+          </div>
         </div>
         <div class="mt-4">
           <div class="h-3 w-full overflow-hidden rounded-full bg-paper-2">

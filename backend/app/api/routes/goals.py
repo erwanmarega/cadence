@@ -7,7 +7,7 @@ relative to the target. Purely a savings/motivation feature — never advice.
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
 from app.api.routes.portfolio import compute_positions
@@ -27,6 +27,18 @@ class GoalCreate(BaseModel):
     @classmethod
     def upper_base(cls, v: str) -> str:
         return v.upper()
+
+
+class GoalUpdate(BaseModel):
+    base: Optional[str] = Field(default=None, min_length=2, max_length=10)
+    target_amount: Optional[float] = Field(default=None, gt=0)
+    quote_currency: Optional[str] = Field(default=None, min_length=3, max_length=5)
+    title: Optional[str] = None
+
+    @field_validator("base")
+    @classmethod
+    def upper_base(cls, v: Optional[str]) -> Optional[str]:
+        return v.upper() if v else v
 
 
 class GoalOut(BaseModel):
@@ -78,6 +90,31 @@ def create_goal(body: GoalCreate, user_id: str = Depends(get_current_user_id)):
     }
     created = get_supabase().table("goals").insert(row).execute().data[0]
     return _attach_progress([created], user_id)[0]
+
+
+@router.patch("/{goal_id}", response_model=GoalOut)
+def update_goal(
+    goal_id: str,
+    body: GoalUpdate,
+    user_id: str = Depends(get_current_user_id),
+):
+    fields = body.model_dump(exclude_unset=True)
+    if "quote_currency" in fields and fields["quote_currency"]:
+        fields["quote_currency"] = fields["quote_currency"].upper()
+    if not fields:
+        raise HTTPException(status_code=400, detail="Aucune modification fournie.")
+
+    updated = (
+        get_supabase()
+        .table("goals")
+        .update(fields)
+        .eq("id", goal_id)
+        .eq("user_id", user_id)
+        .execute()
+    ).data
+    if not updated:
+        raise HTTPException(status_code=404, detail="Objectif introuvable.")
+    return _attach_progress([updated[0]], user_id)[0]
 
 
 @router.delete("/{goal_id}", status_code=204)
