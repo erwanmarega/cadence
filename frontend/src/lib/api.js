@@ -68,6 +68,7 @@ export const api = {
 
   listGoals: () => request("GET", "/goals"),
   createGoal: (payload) => request("POST", "/goals", payload),
+  updateGoal: (id, payload) => request("PATCH", `/goals/${id}`, payload),
   deleteGoal: (id) => request("DELETE", `/goals/${id}`),
 
   taxSummary: (year) => request("GET", `/tax/summary${year ? `?year=${year}` : ""}`),
